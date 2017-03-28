@@ -31,6 +31,10 @@ public class playerMove : MonoBehaviour {
 
 	public Rigidbody rb;
 
+	public Camera weaponCamera;
+
+	Animator weaponHolderAnimator;
+
 	// Use this for initialization
 	void Start () {
 		//Remove cursor and set components
@@ -38,6 +42,8 @@ public class playerMove : MonoBehaviour {
 
 		rb = GetComponent<Rigidbody> ();
 		playerAudio = GetComponent<AudioSource> ();
+
+		weaponHolderAnimator = GameObject.FindGameObjectWithTag ("weaponHolder").GetComponent<Animator> ();
 	}
 
 	void FixedUpdate(){
@@ -55,12 +61,14 @@ public class playerMove : MonoBehaviour {
 		//Take mouse x axis and transform the player by this amount.
 		rotLR = Input.GetAxis ("Mouse X")*rotModifier;
 		transform.Rotate (0, rotLR, 0);
+		weaponHolderAnimator.SetFloat ("rot", rotLR);
 
 		//For the mouse y axis (vertical,) the input must be "clamped" between a +- value (rotLimit,) else the player can rotate vertically indefinitly.
 		//Also, the camera is transformed; not the player, so looking up does not throw the player on his back.
 		verticalRotation -=Input.GetAxis ("Mouse Y")*rotModifier;
 		verticalRotation = Mathf.Clamp (verticalRotation, -rotLimit, rotLimit);
 		Camera.main.transform.localRotation = Quaternion.Euler (verticalRotation, 0, 0);
+		weaponCamera.transform.localRotation = Quaternion.Euler (verticalRotation, 0, 0);
 
 		//Jumping code. On the jump botton, if they are grounded, they can jump. If they are not grounded and have not double jumped, they can jump once more  for
 		//6a double jump. If they have jumped, are not grounded, and have double jumped, then nothing happens.

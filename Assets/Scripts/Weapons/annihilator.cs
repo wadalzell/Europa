@@ -31,7 +31,7 @@ public class annihilator : MonoBehaviour {
 	GameObject skyboxCameraHolder;
 	Animator skyboxCameraAnimator;
 
-
+	Quaternion bulletForward;
 
 	public AudioSource annihilatorAudio;
 	public AudioClip fireAudio;
@@ -122,9 +122,6 @@ public class annihilator : MonoBehaviour {
 
 		//This next section handles the reloading. If the player tries to shoot, but is out of bullets, and is not already reloading, start the reload anim, set reload to
 		//true and begin the reload timer.
-		if (Input.GetButtonDown ("Fire1") && rounds == 0 && !reloading) {
-			reloadMechanics ();
-		}
 		//This works the same as the if statement above, but sees if the player pressed the reload button and is not reloading.
 		if(Input.GetKeyDown(KeyCode.R) && !reloading){
 			reloadMechanics ();
@@ -138,8 +135,12 @@ public class annihilator : MonoBehaviour {
 			reload();
 			AimDownSights.canADS = true;
 		}
-		if (Input.GetButtonDown ("Fire1") && counter > fireRate && !sprinting && rounds>0 && !reloading && !switching) {
-			shoot ();
+		if (Input.GetButton("Fire1")) {
+			if (rounds == 0 && !reloading) {
+				reloadMechanics ();
+			}else if (counter > fireRate && !sprinting && rounds > 0 && !reloading && !switching) {
+				shoot ();
+			}
 		}
 		if (!reloading && !switching) {
 			animator.SetBool ("grounded", grounded);
@@ -189,6 +190,7 @@ public class annihilator : MonoBehaviour {
 		counter = 0;
 		//Set the bullet direction in the direction the camera is facing and add a bit of inaccuracy in there (poorly named variable. Whatever.)
 		Vector3 bulletDirection = Camera.main.transform.forward;
+		bulletForward = Camera.main.transform.rotation;
 		//bulletDirection.x += Random.Range (-accuracy, accuracy);
 		//bulletDirection.y += Random.Range (-accuracy, accuracy);
 
@@ -205,12 +207,12 @@ public class annihilator : MonoBehaviour {
 			}
 		}
 
-		playerBullet = objectPooler.SharedInstance.GetPooledObject ("playerBullet");
-		if (playerBullet != null) {
-			playerBullet.transform.position = bulletSpawn.transform.position;
-			playerBullet.transform.rotation = bulletSpawn.transform.rotation;
-			playerBullet.SetActive (true);
-		}
+		//playerBullet = objectPooler.SharedInstance.GetPooledObject ("playerBullet");
+		//if (playerBullet != null) {
+		//	playerBullet.transform.position = bulletSpawn.transform.position;
+		//	playerBullet.transform.rotation = bulletForward;
+		//	playerBullet.SetActive (true);
+		//}
 		annihilatorAudio.pitch=1;
 		annihilatorAudio.clip = fireAudio;
 		annihilatorAudio.Play ();
