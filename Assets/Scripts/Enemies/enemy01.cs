@@ -26,6 +26,6 @@ public class enemy01 : MonoBehaviour {
 			this.gameObject.SetActive (false);
 			killed = true;
 		}
-		ai.AI.WorkingMemory.SetItem<float> ("Health", health);
+		ai.AI.WorkingMemory.SetItem<float> ("health", health);
 	}
 }
