@@ -1,6 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+<<<<<<< HEAD
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Weapons\pistol.cs">
+=======
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Simple\rotate.cs">
+>>>>>>> 911eb8ee1d314a784bc8994fd68bd9806e877dd2
     <Files>
       <File FileName="Assets\Scripts\Weapons\aimDownSights.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Player\weaponController.cs" Line="1" Column="1" />
@@ -11,6 +15,12 @@
       <File FileName="Assets\Scripts\Enemies\enemy01.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Enemies\spawner.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ObjectPooling\objectPooler.cs" Line="1" Column="1" />
+<<<<<<< HEAD
+=======
+      <File FileName="Assets\Scripts\Shaders\clearSkybox3.shader" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player\playerMove.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Simple\rotate.cs" Line="19" Column="1" />
+>>>>>>> 911eb8ee1d314a784bc8994fd68bd9806e877dd2
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
