@@ -6,6 +6,7 @@ public class canvasController : MonoBehaviour {
 
 	public GameObject crosshair;
 	public GameObject redDot;
+	public GameObject weaponHolder;
 	public float counter;
 
 	public bool ADS;
@@ -15,7 +16,7 @@ public class canvasController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		AimDownSights = GetComponent<aimDownSights> ();
+		AimDownSights = weaponHolder.GetComponent<aimDownSights> ();
 	}
 	
 	// Update is called once per frame

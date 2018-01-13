@@ -9,6 +9,8 @@ public class playerMove : MonoBehaviour {
 	public float rotModifier=6;
 	public float rotLimit = 90.0f;
 	public float jumpSpeed = 10f;
+	public float jumpCounter = 0.0f;
+	public float jumpRate = 1f;
 	public float gForce = 2.5f;
 	public float velocityMag;
 	public float verticalVelocityMag;
@@ -24,6 +26,7 @@ public class playerMove : MonoBehaviour {
 	public bool dblJump = false;
 	public bool grounded = false;
 	public bool sprinting = false;
+	public bool landing = false;
 
 	public Transform groundCheck;
 
@@ -32,18 +35,19 @@ public class playerMove : MonoBehaviour {
 	public Rigidbody rb;
 
 	public Camera weaponCamera;
-
+	public GameObject cameraHolder;
+	public GameObject weaponHolder;
 	Animator weaponHolderAnimator;
+	Animator cameraHolderAnimator;
 
 	// Use this for initialization
 	void Start () {
 		//Remove cursor and set components
 		Cursor.visible=false;
-
 		rb = GetComponent<Rigidbody> ();
 		playerAudio = GetComponent<AudioSource> ();
-
-		weaponHolderAnimator = GameObject.FindGameObjectWithTag ("weaponHolder").GetComponent<Animator> ();
+		weaponHolderAnimator = weaponHolder.GetComponent<Animator> ();
+		cameraHolderAnimator = cameraHolder.GetComponent<Animator> ();
 	}
 
 	void FixedUpdate(){
@@ -51,6 +55,7 @@ public class playerMove : MonoBehaviour {
 		grounded = Physics.CheckSphere (groundCheck.position, groundRadius, whatIsGround);
 		if (grounded) {
 			dblJump = false;
+			weaponHolderAnimator.SetBool ("doubleJump", dblJump);
 		}
 	}
 
@@ -61,7 +66,6 @@ public class playerMove : MonoBehaviour {
 		//Take mouse x axis and transform the player by this amount.
 		rotLR = Input.GetAxis ("Mouse X")*rotModifier;
 		transform.Rotate (0, rotLR, 0);
-		weaponHolderAnimator.SetFloat ("rot", rotLR);
 
 		//For the mouse y axis (vertical,) the input must be "clamped" between a +- value (rotLimit,) else the player can rotate vertically indefinitly.
 		//Also, the camera is transformed; not the player, so looking up does not throw the player on his back.
@@ -71,15 +75,25 @@ public class playerMove : MonoBehaviour {
 		weaponCamera.transform.localRotation = Quaternion.Euler (verticalRotation, 0, 0);
 
 		//Jumping code. On the jump botton, if they are grounded, they can jump. If they are not grounded and have not double jumped, they can jump once more  for
-		//6a double jump. If they have jumped, are not grounded, and have double jumped, then nothing happens.
-		if (Input.GetButtonDown ("Jump") && grounded) {
+		//6a double jump. If they have jumped, are not grounded, and have double jumped, then nothing happens..
+
+		jumpCounter += Time.deltaTime;
+		if (Input.GetButtonDown ("Jump") && grounded && jumpCounter > jumpRate) {
 			rb.AddForce (Vector3.up * jumpSpeed, ForceMode.Impulse);
+			weaponHolderAnimator.SetTrigger ("jump");
+			cameraHolderAnimator.SetTrigger ("jump");
+			jumpCounter = 0;
 		}
-		if (Input.GetButtonDown ("Jump") && !grounded && !dblJump) {
+		if (Input.GetButtonDown ("Jump") && !grounded && !dblJump && jumpCounter > jumpRate) {
 			rb.velocity = new Vector3 (0, 0, 0);
 			rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
 			dblJump = true;
+			jumpCounter = 0;
+			weaponHolderAnimator.SetTrigger ("jump");
+			weaponHolderAnimator.SetBool ("doubleJump", dblJump);
+			cameraHolderAnimator.SetTrigger ("jump");
 		}
+
 
 		//This bit makes jumping feel more lifelike. It dampens the upward jumping while allows the falling to occur at normal conditions.
 		if (rb.velocity.y > 0) {
@@ -87,6 +101,7 @@ public class playerMove : MonoBehaviour {
 		} else {
 			rb.drag = 0.0f;
 		}
+
 
 		//If sprinting, increase speed by the spring modifier
 		if(Input.GetButton("sprint") && Input.GetAxis("Vertical")>0){
@@ -123,6 +138,16 @@ public class playerMove : MonoBehaviour {
 			}
 		} else {
 			playerAudio.Stop ();
+		}
+
+		if (!grounded) {
+			landing = true;
+		}
+
+		if (grounded && landing) {
+			cameraHolderAnimator.SetTrigger ("land");
+			weaponHolderAnimator.SetTrigger ("land");
+			landing = false;
 		}
 	}
 }
